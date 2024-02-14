@@ -2,7 +2,7 @@
 var map = L.map('map',{
   center: [35.2425,-101.9445],
   zoom: 16,
- // minZoom: 16,   //Set the minimum allowed zoom level
+  minZoom: 16,   //Set the minimum allowed zoom level
   maxBounds: L.latLngBounds([35.233579, -101.958148], [35.250973, -101.931660]) // Set the maximum bounds
   });
 
@@ -21,8 +21,7 @@ var satelliteLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z
   accessToken: 'pk.eyJ1IjoidGJja2lyayIsImEiOiJjbHJyMjE5ZTAwOW9qMmlva2twMmN2cXhjIn0.if4mRdsJt7AQwMHeayh-bQ'
 });
 
-// Array of preset points with information
-var points = [
+var landmarkPoints = [
   //          Landmark Points
   {
     latlng: [35.235, -101.93965],
@@ -43,7 +42,13 @@ var points = [
     title: 'Windmill',
     images: ['images/image2.jpg', 'images/image2_2.jpg'], // Array of image paths
     description: 'Description for Point 2.'
-  },
+  }
+]
+
+
+// Array of Structure points with information
+var structurePoints = [
+  
   //   {
   //   latlng: [, ],
   //   title: '',
@@ -501,14 +506,18 @@ var points = [
   },
   
   // Add more points as needed
-
-  
-  
 ];
 
-// Loop through points and add markers to the map
-points.forEach(function(point) {
-  var marker = L.marker(point.latlng).addTo(map);
+var redMarker = L.divIcon({
+  className: 'custom-marker',
+  html: '<div style="background-color: red; border-radius: 50%; width: 20px; height: 20px;"></div>',
+  iconSize: [50, 50],
+  iconAnchor: [10, 10]
+});
+
+// Loop through Landmark points and add markers to the map
+landmarkPoints.forEach(function(point) {
+  var marker = L.marker(point.latlng,{icon:redMarker}).addTo(map);
 
   // Add a popup to each marker
   var popupContent = `
@@ -522,7 +531,26 @@ points.forEach(function(point) {
   popupContent += `</div>
     <p>${point.description}</p>
   `;
-  marker.bindPopup(popupContent);
+  marker.bindPopup(popupContent, {
+    autoPan: false, // Disable automatic panning
+    autoPanPaddingTopLeft: L.point(0, 0), // Set padding to 0 from the top left
+    autoPanPaddingBottomRight: L.point(0, 0) // Set padding to 0 from the bottom right
+  });
+});
+
+// Loop through Landmark points and add markers to the map
+structurePoints.forEach(function(point) {
+  var marker = L.marker(point.latlng).addTo(map);
+
+  // Bind a click event to each marker
+  marker.on('click', function() {
+    // Update the content of the marker data area
+    var markerDataElement = document.getElementById('marker-data');
+    markerDataElement.innerHTML = `
+      <h3>${point.title}</h3>
+      <p>${point.description}</p>
+    `;
+  });
 });
 
 // Add a control to toggle between Street View and Satellite View
@@ -532,3 +560,18 @@ var baseMaps = {
 };
 
 L.control.layers(baseMaps).addTo(map);
+
+// Create a map key control
+var mapKeyControl = L.control({position: 'bottomleft'});
+
+// Define the content of the map key
+mapKeyControl.onAdd = function (map) {
+  var div = L.DomUtil.create('div', 'map-key');
+  div.innerHTML += '<h4>Map Key</h4>';
+  div.innerHTML += '<p><span class="map-marker red"></span> Red Marker</p>';
+  div.innerHTML += '<p><span class="map-marker blue"></span> Blue Marker</p>';
+  return div;
+};
+
+// Add the map key control to the map
+mapKeyControl.addTo(map);

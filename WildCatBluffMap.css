@@ -1,0 +1,33 @@
+.map-marker {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.red {
+    background-color: red;
+}
+
+.blue {
+    background-color: blue;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80%; /* Adjust as needed */
+    height: 100%;
+  }
+  
+  #marker-data {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20%; /* Adjust as needed */
+    height: 100%;
+    overflow-y: auto; /* Enable vertical scrolling if needed */
+    padding: 10px;
+  }
