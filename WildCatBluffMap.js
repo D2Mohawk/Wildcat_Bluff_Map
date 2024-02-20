@@ -21,13 +21,74 @@ var satelliteLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z
   accessToken: 'pk.eyJ1IjoidGJja2lyayIsImEiOiJjbHJyMjE5ZTAwOW9qMmlva2twMmN2cXhjIn0.if4mRdsJt7AQwMHeayh-bQ'
 });
 
+//############################################################################
+
+
+//Add event listeners for photo gallery buttons
+var currentIndex = 0;
+
+document.getElementById('next-arrow').addEventListener('click', function() {
+  currentIndex = (currentIndex + 1) % structurePoints[currentPointIndex].images.length;
+  updateGalleryImage();
+});
+
+document.getElementById('prev-arrow').addEventListener('click', function() {
+  currentIndex = (currentIndex - 1 + structurePoints[currentPointIndex].images.length) % structurePoints[currentPointIndex].images.length;
+  updateGalleryImage();
+});
+
+// Function to update the gallery image
+function updateGalleryImage() {
+  document.getElementById('gallery-image').src = structurePoints[currentPointIndex].images[currentIndex];
+}
+
+
+
+//############################################################################
+
+
+// Add event listeners for next and previous point buttons
+document.getElementById('next-point-btn').addEventListener('click', function() {
+  // Move to the next point
+  currentPointIndex = (currentPointIndex + 1) % structurePoints.length;
+  updateMarkerInfo();
+});
+
+document.getElementById('prev-point-btn').addEventListener('click', function() {
+  // Move to the previous point
+  currentPointIndex = (currentPointIndex - 1 + structurePoints.length) % structurePoints.length;
+  updateMarkerInfo();
+});
+
+// Function to update marker info
+function updateMarkerInfo() {
+  var point = structurePoints[currentPointIndex];
+  var markerInfoElement = document.getElementById('info-container');
+  markerInfoElement.innerHTML = `
+    <h3>${point.title}</h3>
+    <p>${point.description}</p>
+  `;
+  currentIndex = 0;
+  updateGalleryImage();
+}
+
+function updateGalleryImage() {
+  document.getElementById('gallery-image').src = structurePoints[currentPointIndex].images[currentIndex];
+}
+
+//############################################################################
+
+
+
+
+
+
 var landmarkPoints = [
   //          Landmark Points
   {
     latlng: [35.235, -101.93965],
     title: 'HQ',
-    images: [ 'https://drive.google.com/file/d/126YZG0czF8_bMBsXDCCLrgbbyf7vjoYf/view?usp=sharing',
-      'https://drive.google.com/uc?id=YOUR_IMAGE_ID_2'
+    images: [ 'Photos/2024_Photos/1January/Sections/Landmarks/TestPhoto.jpg'
     ],
     description: 'Description for Point 1.'
   },
@@ -61,20 +122,20 @@ var structurePoints = [
    {
      latlng: [35.2487933333333,-101.944646666667],
      title: 'S1_Point 1',
-     images: ['', ''], // Array of image paths
-     description: ''
+     images: ['Photos/2024_Photos/1January/Sections/Landmarks/TestPhoto.jpg','Photos/2024_Photos/1January/Sections/Landmarks/TestPhoto2.jpg'], // Array of image paths
+     description: 'etadsiahgjareobnviuoldgnawajdhvuilajkntralbdgasdf'
    },
    {
     latlng: [35.2488166666667,-101.94467],
     title: 'S1_Point 2',
-    images: ['', ''], // Array of image paths
-    description: ''
+    images: ['Photos/2024_Photos/1January/Sections/Section_1/20240128_102711.jpg',''], // Array of image paths
+    description: 'fdhaushgaflbhvuawebnausdhvaisgmasgasdfgasdfr'
   },
   {
     latlng: [35.2487483333333,-101.945906666667],
     title: 'S1_Point 3',
-    images: ['', ''], // Array of image paths
-    description: ''
+    images: ['Photos/2024_Photos/1January/Sections/Section_2/20240128_102103.jpg', ''], // Array of image paths
+    description: 'asfdgopihj lkeha di fgjhaeulf hdfgajs hdga'
   },
   //{
   //  latlng: [],
@@ -85,7 +146,7 @@ var structurePoints = [
   {
     latlng: [35.248305,-101.94591],
     title: 'S1_Point 5',
-    images: ['', ''], // Array of image paths
+    images: ['Photo/2024_Photos/1January/Sections/Section_3/20240128_102039.jpg', ''], // Array of image paths
     description: ''
   },
   {
@@ -538,18 +599,46 @@ landmarkPoints.forEach(function(point) {
   });
 });
 
-// Loop through Landmark points and add markers to the map
-structurePoints.forEach(function(point) {
+//################################################################
+
+
+//Change this to update default starting point of point gallery
+var defPoint = structurePoints[0]
+
+//Displays default point on right side
+var markerInfoElement = document.getElementById('info-container');
+    markerInfoElement.innerHTML = `
+      <h3>${defPoint.title}</h3>
+      <p>${defPoint.description}</p>
+    `;
+  // Update the current point index
+  currentPointIndex = 0;
+
+  // Update the gallery image
+  currentIndex = 0;
+  updateGalleryImage();
+
+  //###############################################################
+
+// Loop through Structure points and add markers to the map
+structurePoints.forEach(function(point, index) {
   var marker = L.marker(point.latlng).addTo(map);
 
   // Bind a click event to each marker
   marker.on('click', function() {
     // Update the content of the marker data area
-    var markerDataElement = document.getElementById('marker-data');
-    markerDataElement.innerHTML = `
+    var markerInfoElement = document.getElementById('marker-info');
+    markerInfoElement.innerHTML = `
       <h3>${point.title}</h3>
       <p>${point.description}</p>
     `;
+
+    // Update the current point index
+    currentPointIndex = index;
+
+    // Update the gallery image
+    currentIndex = 0;
+    updateGalleryImage();
   });
 });
 
@@ -575,3 +664,6 @@ mapKeyControl.onAdd = function (map) {
 
 // Add the map key control to the map
 mapKeyControl.addTo(map);
+
+
+
