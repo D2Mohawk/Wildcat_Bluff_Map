@@ -627,7 +627,7 @@ structurePoints.forEach(function(point, index) {
   // Bind a click event to each marker
   marker.on('click', function() {
     // Update the content of the marker data area
-    var markerInfoElement = document.getElementById('marker-info');
+    var markerInfoElement = document.getElementById('info-container');
     markerInfoElement.innerHTML = `
       <h3>${point.title}</h3>
       <p>${point.description}</p>
